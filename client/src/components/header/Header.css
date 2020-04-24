@@ -1,5 +1,13 @@
 header.header {
-    height: var(--header-px);
-    background-color: var(--accent);
-    border-bottom: 1px solid black;
+  height: var(--header-px);
+  background-color: var(--accent);
+}
+
+header.header > * {
+  flex-basis: 0px;
+  min-width: 100px;
+  cursor: pointer;
+}
+
+header.header > div:hover {
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import './Header.css'
+import './Header.css';
 
 type IProps = {
 
@@ -7,9 +7,19 @@ type IProps = {
 
 const Header: React.FC<IProps> = (props: IProps): JSX.Element => {
     return <header className="header clr-accent flexbox flex-center pd-sm">
-        <div style={{ color: 'white', }} className="title fw-600 fw-xlg">
+        <div className="title clr-white fw-600 font-xlg">
             Zeus
         </div>
+        {/* <div className="body clr-white fw-600 font-lg">
+            Home
+        </div> */}
+        <div className="flex-grow">
+
+        </div>
+        <button onClick={() => console.log('login attempt')} className="body rounded clr-accent bkg-white fw-600 font-lg" style={{ border: 'none' }}>
+            Login
+        </button>
+
 
     </header>
 };

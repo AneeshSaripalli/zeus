@@ -1,84 +1,125 @@
 div.page {
-    min-height: 100vh;
-    width: 100%;
-    background-color: var(--bkg-color);
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bkg-color);
 }
 
 .flexbox {
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-    flex-flow: row wrap;
-    overflow: hidden;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  flex-flow: row wrap;
+  overflow: hidden;
 }
 
-.flexbox>div {
-    flex: 1;
+.fadein {
+  animation: fadein 2s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.hover-grow {
+  transition: ease 0.5s all;
+}
+
+.hover-grow:hover {
+  transform: scale(1.01);
+}
+
+.flex-grow {
+  flex: 1;
 }
 
 .flex-stretch {
-    align-items: stretch;
+  align-items: stretch;
 }
 
 .flex-center {
-    align-items: center;
+  align-items: center;
 }
 
 .flex-row {
-    flex-direction: row;
+  flex-direction: row;
 }
 
 .flex-column {
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .clr-white {
-    color: white;
+  color: white;
 }
 
 .clr-black {
-    color: black;
+  color: black;
 }
 
 .clr-accent {
-    color: var(--accent);
+  color: var(--accent);
+}
+
+.rounded {
+  border-radius: var(--border-radius);
+}
+
+.h-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bkg-white {
+  background-color: white;
+}
+
+.bkg-black {
+  background-color: black;
+}
+
+.bkg-accent {
+  background-color: var(--accent);
 }
 
 .font-sm {
-    font-size: small;
+  font-size: small;
 }
 
 .font-lg {
-    font-size: large;
+  font-size: large;
 }
 
 .font-xlg {
-    font-size: x-large;
+  font-size: x-large;
 }
 
 .font-md {
-    font-size: medium;
+  font-size: medium;
 }
 
 .fw-600 {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .fw-400 {
-    font-size: 400;
+  font-size: 400;
 }
 
 .title {
-    font-family: var(--txt-title);
+  font-family: var(--txt-title);
 }
 
 .mgn-sm {
-    margin-left: 5px;
-    margin-right: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .pd-sm {
-    padding-left: 5px;
-    padding-right: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
