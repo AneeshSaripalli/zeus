@@ -3,3 +3,82 @@ div.page {
     width: 100%;
     background-color: var(--bkg-color);
 }
+
+.flexbox {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex-flow: row wrap;
+    overflow: hidden;
+}
+
+.flexbox>div {
+    flex: 1;
+}
+
+.flex-stretch {
+    align-items: stretch;
+}
+
+.flex-center {
+    align-items: center;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.clr-white {
+    color: white;
+}
+
+.clr-black {
+    color: black;
+}
+
+.clr-accent {
+    color: var(--accent);
+}
+
+.font-sm {
+    font-size: small;
+}
+
+.font-lg {
+    font-size: large;
+}
+
+.font-xlg {
+    font-size: x-large;
+}
+
+.font-md {
+    font-size: medium;
+}
+
+.fw-600 {
+    font-weight: 600;
+}
+
+.fw-400 {
+    font-size: 400;
+}
+
+.title {
+    font-family: var(--txt-title);
+}
+
+.mgn-sm {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.pd-sm {
+    padding-left: 5px;
+    padding-right: 5px;
+}

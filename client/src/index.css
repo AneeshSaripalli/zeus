@@ -9,10 +9,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-.root {
+:root {
   --border-radius: 5px;
-  --body-text: Raleway, sans-serif;
-  --body-title: Montserrat, sans-serif;
+  --txt-body: Raleway, sans-serif;
+  --txt-title: Montserrat, sans-serif;
   --bkg-color: white;
-  --bkg-highlight: #0074D9;
+  --accent: #0074D9;
+  --header-px: 40px;
 }

@@ -1,0 +1,5 @@
+header.header {
+    height: var(--header-px);
+    background-color: var(--accent);
+    border-bottom: 1px solid black;
+}
