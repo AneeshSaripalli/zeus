@@ -26,7 +26,6 @@ const Landing: React.FC<IProps> = (props: IProps): JSX.Element => {
 
 
         <div className="flexbox flex-column flex-center" id="info" >
-            <a href='info' />
             <div className="clr-accent title anim-delay-1s" id="whatwedo" style={{ fontSize: '40px' }}>
                 <span className="hover-grow clr-accent rounded pd-sm fw-600">
                     What We Do

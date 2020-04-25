@@ -1,8 +1,9 @@
-import MainReducer from '../reducers/main';
 import { combineReducers } from 'redux';
+import MainReducer from '../reducers/main';
+import { MainReducerName } from '../types/';
 
 const ReduxReducer = combineReducers({
-    main: MainReducer,
+    [MainReducerName]: MainReducer,
 })
 
 export default ReduxReducer;

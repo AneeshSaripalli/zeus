@@ -9,7 +9,8 @@ import Button from 'antd/es/button';
 type IProps = {
     onCancel: () => void;
     visible: boolean;
-    onLogin: () => void;
+    onFailure?: () => void;
+    onLogin: (profile: object) => void;
 }
 
 const Login: React.FC<IProps> = (props: IProps): JSX.Element => {
@@ -17,13 +18,17 @@ const Login: React.FC<IProps> = (props: IProps): JSX.Element => {
     const handleLogin = (provider: firebase.auth.AuthProvider) => {
         firebaseModule.auth().signInWithPopup(provider).then(
             result => {
-                const { user } = result;
-                const profileString: string = JSON.stringify(user)
+                const user = result.user;
 
-                console.info(`Profile string ${profileString}`)
+                if (user === null) {
+                    if (props.onFailure)
+                        return props.onFailure();
+                    else {
+                        return;
+                    }
+                }
 
-                // this.props.fetchAndSetJWT(profileString)
-                props.onLogin();
+                props.onLogin(user);
             }
         )
     }
