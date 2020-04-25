@@ -1,7 +1,6 @@
+import ArrowDown from '@ant-design/icons/ArrowDownOutlined';
 import React from 'react';
-import './Landing.css'
-import ArrowDown from '@ant-design/icons/ArrowDownOutlined'
-import Icon from '@ant-design/icons/lib/components/Icon';
+import './Landing.css';
 
 type IProps = {
 
@@ -26,18 +25,29 @@ const Landing: React.FC<IProps> = (props: IProps): JSX.Element => {
         </div>
 
 
-        <div className="flexbox flex-column flex-center" id="info" style={{ height: '100vh', backgroundColor: 'rgba(240,240,240)', textAlign: 'center', paddingTop: '50px' }}>
+        <div className="flexbox flex-column flex-center" id="info" >
             <a href='info' />
             <div className="clr-accent title anim-delay-1s" id="whatwedo" style={{ fontSize: '40px' }}>
                 <span className="hover-grow clr-accent rounded pd-sm fw-600">
                     What We Do
                 </span>
             </div>
-            <div className="clr-black body fw-600 font-xlg" style={{ marginTop: '60px', marginLeft: "10%", marginRight: '10%' }}>
-                <div>We've solved the incentives problem for reducing power consumption.</div>
-
+            <div className="clr-black body fw-400 font-xlg h-center" id="product-desc" >
+                <p>
+                    By gamifying and incentivizing environmental friendliness, <br />
+                    we've solved the incentives problem for reducing resource consumption.<br />
+                </p>
             </div>
 
+            <div className="flex-grow" />
+            <div>
+                Diagram here
+            </div>
+
+            <div className="flex-grow" />
+            <div className="title fw-600 font-xlg pd-sm clr-accent rounded">
+                Learn more about Zeus by logging in!
+            </div>
         </div>
 
     </div >

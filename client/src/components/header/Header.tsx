@@ -16,7 +16,7 @@ const Header: React.FC<IProps> = (props: IProps): JSX.Element => {
         <div className="flex-grow">
 
         </div>
-        <button onClick={() => console.log('login attempt')} className="body rounded clr-accent bkg-white fw-600 font-lg" style={{ border: 'none' }}>
+        <button onClick={() => console.log('login attempt')} className="body rounded clr-accent bkg-white fw-600 font-lg">
             Login
         </button>
 

@@ -20,6 +20,11 @@
   position: absolute;
 }
 
+#product-desc {
+  margin-top: 60px;
+  width: 50%;
+}
+
 @keyframes bounce {
   from {
     bottom: 100px;
@@ -32,6 +37,14 @@
 #subtitle {
   animation: 2.4s ease 0s delay-fadein;
   margin-bottom: 50px;
+}
+
+#info {
+  height: 100vh;
+  background: rgba(240, 240, 240);
+  text-align: center;
+  padding-top: 50px;
+  padding-bottom: 20px;
 }
 
 @keyframes delay-fadein {
