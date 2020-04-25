@@ -13,6 +13,7 @@ code {
 }
 
 :root {
+  scroll-behavior: smooth;
   --border-radius: 10px;
   --txt-body: Raleway, sans-serif;
   --txt-title: Montserrat, sans-serif;
