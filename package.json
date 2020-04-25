@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws/dynamodb-data-mapper": "^0.7.3",
+    "@types/aws-sdk": "^2.7.0",
     "@types/axios": "^0.14.0",
     "@types/body-parser": "^1.19.0",
     "@types/cors": "^2.8.6",
@@ -20,6 +22,7 @@
     "@types/firebase": "^3.2.1",
     "@types/google-map-react": "^1.1.6",
     "@types/jsonwebtoken": "^8.3.9",
+    "aws-sdk": "^2.663.0",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",

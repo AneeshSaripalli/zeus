@@ -21,21 +21,11 @@ type IProps = RouteComponentProps<{}> & IReduxDispatch & IReduxState;
 const Header: React.FC<IProps> = (props: IProps): JSX.Element => {
     const [loginVisible, setLoginVisible] = React.useState<boolean>(false);
 
-    console.log('props', props.jwt)
-
     React.useEffect(() => {
         if (props.jwt === null) {
             props.loadJWT();
         }
     });
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-            console.log(position.coords)
-        }, err => {
-            console.log('Failed request.')
-        })
-    }
 
     const renderTopRightWidget = () => {
         if (props.jwt) {

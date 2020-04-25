@@ -8,6 +8,7 @@ const defaultState: MainReducerState = {
 function MainReducer(state = defaultState, action: Action<any>): MainReducerState {
     switch (action.type) {
         case MAIN_SET_JWT: {
+            console.log('updating jwt', action.payload)
             return {
                 ...state,
                 jwt: action.payload

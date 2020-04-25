@@ -1,14 +1,16 @@
 import { Col } from 'antd/es/grid';
 import Row from 'antd/es/row';
-import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
-import "./Profile.css";
-import Descriptions from 'antd/es/descriptions';
-import { GlobalState, MainReducerName } from '../../redux/types';
-import { connect } from 'react-redux';
 import GoogleReactMap from 'google-map-react';
-type IReduxDispatchProps = {
+import React from 'react';
+import { connect } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
+import { GlobalState, MainReducerName } from '../../redux/types';
+import "./Profile.css";
+import axios from 'axios';
+import { checkLSForJWT } from '../../redux/actions/main';
 
+type IReduxDispatchProps = {
+    loadJWT: () => void;
 }
 
 type IReduxStateProps = {
@@ -21,7 +23,22 @@ type IProps = IReduxStateProps & IReduxDispatchProps & RouteComponentProps;
 const Profile: React.FC<IProps> = (props: IProps): JSX.Element => {
     React.useEffect(() => {
         if (props.jwt === null) {
-            props.history.push('/');
+            // props.history.push('/');
+            props.loadJWT();
+        } else {
+            console.log("nav get position, jwt non null")
+            navigator.geolocation.getCurrentPosition(position => {
+                console.log(position.coords)
+                axios.post('/api/location', {}, {
+                    params: {
+                        jwt: props.jwt,
+                        location: {
+                            lat: position.coords.latitude,
+                            lng: position.coords.latitude
+                        }
+                    }
+                });
+            });
         }
     })
 
@@ -36,15 +53,6 @@ const Profile: React.FC<IProps> = (props: IProps): JSX.Element => {
                     User Name
                     </div>
             </div>
-            {/* <Descriptions className="body">
-                    <Descriptions.Item label="Name">Zhou Maomao</Descriptions.Item>
-                    <Descriptions.Item label="Telephone">1810000000</Descriptions.Item>
-                    <Descriptions.Item label="Live">Hangzhou, Zhejiang</Descriptions.Item>
-                    <Descriptions.Item label="Remark">empty</Descriptions.Item>
-                    <Descriptions.Item label="Address">
-                        No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
-                   </Descriptions.Item>
-                </Descriptions> */}
             <div style={{ height: '500px' }}>
                 <GoogleReactMap
                     bootstrapURLKeys={{ key: 'AIzaSyAwQMP10DBDYDQXkdeJjya6QFTNeso3YEU' }}
@@ -63,4 +71,10 @@ const mapStateToProps = (state: GlobalState): IReduxStateProps => {
     }
 }
 
-export default connect(mapStateToProps, null)(Profile);
+const mapDispatchToProps = (dispatch: any): IReduxDispatchProps => {
+    return {
+        loadJWT: dispatch(checkLSForJWT)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

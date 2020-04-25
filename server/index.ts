@@ -1,6 +1,6 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import express from 'express';
+import express, { response } from 'express';
 import jwt from 'jsonwebtoken';
 
 const PORT: number = 8000;
@@ -16,6 +16,13 @@ app.get('/', (request: express.Request, response: express.Response) => {
     return response.status(200).json({
         response: 'Response'
     });
+})
+
+app.post('/api/location', (request: express.Request, response: express.Response) => {
+    console.log(request.query);
+    return response.status(200).json({
+        response: 'dummy response'
+    })
 })
 
 app.get('/api/jwt', (request: express.Request, response: express.Response) => {

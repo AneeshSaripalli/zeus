@@ -30,6 +30,7 @@ export const checkLSForJWT = (dispatch: any) => () => {
     const jwt: string | null = localStorage.getItem('jwt');
 
     if (jwt !== null) {
+        console.log("Found jwt in local storage")
         // login done, just reload from localstorage into redux
         dispatch(setJWT(jwt));
     }
