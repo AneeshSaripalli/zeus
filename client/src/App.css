@@ -17,12 +17,16 @@ div.page {
 }
 
 @keyframes fadein {
-  from {
+  0% {
     opacity: 0;
   }
-  to {
+  100% {
     opacity: 1;
   }
+}
+
+.clickable {
+  cursor: pointer;
 }
 
 .hover-grow {
@@ -122,4 +126,12 @@ div.page {
 .pd-sm {
   padding-left: 5px;
   padding-right: 5px;
+}
+
+.shadowed {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.anim-delay-1s {
+  animation-delay: 1s;
 }

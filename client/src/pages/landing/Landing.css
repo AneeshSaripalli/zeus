@@ -6,3 +6,29 @@
     rgba(0, 116, 217, 1) 100%
   );
 }
+
+#click-arrow {
+  --icon-size: 30px;
+  border-radius: calc(var(--icon-size) * 2);
+  font-size: var(--icon-size);
+  padding: 20px;
+}
+
+#subtitle {
+  animation: 2.4s ease 0s delay-fadein;
+}
+
+@keyframes delay-fadein {
+  0% {
+    opacity: 0;
+  }
+  33% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+#whatwedo {
+}
