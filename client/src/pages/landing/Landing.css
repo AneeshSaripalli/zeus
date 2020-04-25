@@ -16,6 +16,7 @@
   border-radius: calc(var(--icon-size) * 2);
   font-size: var(--icon-size);
   padding: 20px;
+  margin-left: calc(-1 * var(--icon-size));
   animation: bounce 1s infinite alternate;
   position: absolute;
 }
