@@ -5,6 +5,10 @@
     rgba(0, 181, 255, 1) 0%,
     rgba(0, 116, 217, 1) 100%
   );
+  height: calc(100vh - var(--header-px));
+  text-align: center;
+  padding-bottom: 30px;
+  position: relative;
 }
 
 #click-arrow {
@@ -12,10 +16,22 @@
   border-radius: calc(var(--icon-size) * 2);
   font-size: var(--icon-size);
   padding: 20px;
+  animation: bounce 1s infinite alternate;
+  position: absolute;
+}
+
+@keyframes bounce {
+  from {
+    bottom: 100px;
+  }
+  to {
+    bottom: 150px;
+  }
 }
 
 #subtitle {
   animation: 2.4s ease 0s delay-fadein;
+  margin-bottom: 50px;
 }
 
 @keyframes delay-fadein {
