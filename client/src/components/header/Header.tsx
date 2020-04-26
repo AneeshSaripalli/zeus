@@ -33,7 +33,6 @@ const Header: React.FC<IProps> = (props: IProps): JSX.Element => {
 
     const menuClick = (param: ClickParam) => {
         if (param.key === 'logout') {
-            console.log('logging out')
             props.logoutJWT();
             props.history.push('/');
         }

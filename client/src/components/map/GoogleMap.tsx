@@ -5,8 +5,17 @@ import { ConsumptionScore } from '../../../../types/dist';
 import MapPin from './pin/MapPin';
 
 
-type IProps = {
+export type ScoreRanking = {
+    scores: ConsumptionScore[],
+    self: {
+        id: string
+    },
+    ranking: number
+}
 
+
+type IProps = {
+    data: ScoreRanking
 }
 
 const getGradientColor = (start_color: string, end_color: string, percent: number) => {
@@ -50,22 +59,9 @@ const getGradientColor = (start_color: string, end_color: string, percent: numbe
 };
 
 const GoogleMap: React.FC<IProps> = (props: IProps): JSX.Element => {
-    const [data, setData] = React.useState<ConsumptionScore[]>();
     const [mapLoad, setMapLoad] = React.useState<boolean>(false);
+    const data = props.data.scores;
 
-    React.useEffect(() => {
-        if (data === undefined) {
-            axios.get('/api/all', {
-                params: {
-                    jwt: localStorage.getItem('jwt')
-                }
-            }).then((response: AxiosResponse<{ response: ConsumptionScore[] }>) => {
-                const scores = response.data.response;
-                console.info(scores.length);
-                setData(scores);
-            })
-        }
-    })
 
     const renderPins = () => {
         if (data === undefined || mapLoad === false) {
@@ -82,13 +78,12 @@ const GoogleMap: React.FC<IProps> = (props: IProps): JSX.Element => {
         }
 
         return data.map((userData, idx) => {
-            console.log(userData.coords)
-            return <MapPin lat={userData.coords.lat} lng={userData.coords.lng} color={getGradientColor(start, end, idx / data.length)} text="Marker 1" />
+            return <MapPin key={`${userData.uid}`} lat={userData.coords.lat} lng={userData.coords.lng} color={getGradientColor(start, end, idx / data.length)} text="Marker 1" />
         })
     }
     const mapPins = data?.map
 
-    return (<div style={{ height: '500px' }}>
+    return (<div style={{ height: '500px' }} className="fadein">
         <GoogleReactMap
             bootstrapURLKeys={{ key: 'AIzaSyAwQMP10DBDYDQXkdeJjya6QFTNeso3YEU' }}
             defaultCenter={{ lat: 32.776665, lng: -96.796989 }}

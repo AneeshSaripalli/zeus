@@ -2,13 +2,13 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { OAuthUser } from './types/OAuthUser';
-
 import NodeGeocoder from 'node-geocoder';
+import { ConsumptionScore } from '../types/dist';
 import keys from './config';
 import DynamoMapper from './database/DataMapper';
 import User from './models/User';
-import { ConsumptionScore } from '../types/dist'
+import { OAuthUser } from './types/OAuthUser';
+
 
 const geocoder = NodeGeocoder({
     provider: "google",
@@ -53,13 +53,84 @@ app.get('/', (request: express.Request, response: express.Response) => {
     });
 })
 
+
 app.get('/api/all', JWTMiddleware, async (request: express.Request, response: express.Response) => {
     const profile: OAuthUser = response.locals.user;
+    const reqUser = await DynamoMapper.get<User>(Object.assign<User, Partial<User>>(new User, {
+        id: profile.uid
+    }));
+
 
     const users: User[] = [];
 
-    for await (const user of DynamoMapper.scan<User>(User, {})) {
+    for await (const user of DynamoMapper.scan<User>(User)) {
         users.push(user);
+    }
+
+
+    const scores: ConsumptionScore[] = users.sort((u1, u2) => u1.consumption[0][1] - u2.consumption[0][1]).map((user, idx) =>
+        ({
+            consumption: user.consumption[0][1],
+            ranking: idx,
+            uid: user.id,
+            utility: 'electric',
+            coords: {
+                lat: user.lat,
+                lng: user.lng
+            }
+        })
+    );
+
+    const ranking: number = 100 * bs(scores, reqUser.consumption[0][1]) / scores.length;
+
+
+    return response.status(200).json({
+        response: {
+            scores: scores.slice(0, 1000),
+            self: reqUser,
+            ranking
+        }
+    });
+})
+
+const bs = (scores: ConsumptionScore[], cons: number): number => {
+    let start = 0;
+    let end = scores.length - 1;
+
+    while (start <= end) {
+        const mid = Math.floor((start + end) / 2);
+
+        if (scores[mid].consumption === cons) return mid;
+
+        if (scores[mid].consumption < cons) {
+            start = mid + 1;
+        } else {
+            end = mid - 1;
+        }
+    }
+
+    return start;
+}
+
+app.get('/api/nearby', JWTMiddleware, async (request: express.Request, response: express.Response) => {
+    const profile: OAuthUser = response.locals.user;
+
+    const reqUser = await DynamoMapper.get<User>(Object.assign<User, Partial<User>>(new User, {
+        id: profile.uid
+    }));
+
+    const users: User[] = [];
+
+    console.log('Request for', reqUser.zip)
+
+    for await (const record of DynamoMapper.scan<User>(User, {
+        filter: {
+            subject: 'zip',
+            type: 'Equals',
+            object: reqUser.zip
+        }
+    })) {
+        users.push(record);
     }
 
     const scores: ConsumptionScore[] = users.sort((u1, u2) => u1.consumption[0][1] - u2.consumption[0][1]).map((user, idx) =>
@@ -75,10 +146,18 @@ app.get('/api/all', JWTMiddleware, async (request: express.Request, response: ex
         })
     );
 
-    return response.status(200).json({ response: scores });
+    const ranking: number = 100 * bs(scores, reqUser.consumption[0][1]) / scores.length;
+
+    return response.status(200).json({
+        response: {
+            scores: scores,
+            self: reqUser,
+            ranking
+        }
+    });
 })
 
-app.post('/api/location', JWTMiddleware, (request: express.Request, response: express.Response) => {
+app.post('/api/location', JWTMiddleware, async (request: express.Request, response: express.Response) => {
     console.log(response.locals.user);
     const loc: {
         lat: number,
@@ -87,23 +166,36 @@ app.post('/api/location', JWTMiddleware, (request: express.Request, response: ex
 
     const user: OAuthUser = response.locals.user;
 
-    geocoder.reverse({
-        lat: loc.lat,
-        lon: loc.lng
-    }).then(response => {
-        const top = response[0];
+    let userExists: boolean = false;
 
-        const hotel = Object.assign<User, User>(new User, {
-            id: user.uid,
-            address: top.formattedAddress!,
-            consumption: [["electricity", Math.random() * 1000.0]],
+    try {
+        await DynamoMapper.get<User>(Object.assign<User, Partial<User>>(new User, {
+            id: user.uid
+        }))
+        userExists = true;
+    } catch (e) {
+
+    }
+
+    if (!userExists) {
+        geocoder.reverse({
             lat: loc.lat,
-            lng: loc.lng,
-            zip: top.zipcode!
-        });
+            lon: loc.lng
+        }).then(response => {
+            const top = response[0];
 
-        DynamoMapper.put(hotel);
-    })
+            const hotel = Object.assign<User, User>(new User, {
+                id: user.uid,
+                address: top.formattedAddress!,
+                consumption: [["electricity", Math.random() * 1000.0]],
+                lat: loc.lat,
+                lng: loc.lng,
+                zip: top.zipcode!
+            });
+
+            DynamoMapper.put(hotel);
+        })
+    }
 
 
     return response.status(200).json({

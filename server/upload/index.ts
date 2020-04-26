@@ -1,13 +1,11 @@
+import crypto from 'crypto';
 import csv from 'csv-parse';
 import fs from 'fs';
 import node_geocoder from 'node-geocoder';
 import keys from '../config';
-import DataMapper from '../database/DataMapper'
+import DynamoMapper from '../database/DataMapper';
 import User from '../models/User';
-import { v4 } from 'uuid'
 
-let cnt: number = -1;
-const maxCnt: number = 1000;
 
 const geocoder = node_geocoder({
     provider: "google",
@@ -19,30 +17,40 @@ const parser = csv({
     auto_parse: true
 });
 
+type Loc = {
+    lng: number;
+    lat: number;
+    number: number;
+    street: string;
+}
+
+const buffer: Loc[] = []
+
 fs.createReadStream('./data/dallas.csv')
     .pipe(parser)
-    .on('data', (row: string[]) => {
-        parser.pause()
+    .on('data', async (row: string[]) => {
         const lng: number = +row[0];
         const lat: number = +row[1];
         const number: number = +row[2];
         const street: string = row[3].toString();
+        buffer.push({
+            lat,
+            lng,
+            number,
+            street
+        });
 
-        if (cnt >= maxCnt) {
-            process.exit(0);
-        }
-        ++cnt;
+        if (buffer.length >= 1000) {
+            parser.pause();
+            const results = await geocoder.batchGeocode(buffer.map(({ number, street }) => `${number} ${street}, Dallas, Texas`))
 
-        const addr: string = `${number} ${street}`
+            const objects: (User | null)[] = results.map((result, idx) => {
+                const { value } = result;
+                if (value === null) return null;
+                const top = value[0];
 
-        console.log(cnt, lng, lat, number, street)
-
-        if (cnt !== 0) {
-            geocoder.geocode(`${number} ${street}, Dallas, Texas`).then(results => {
-                const top = results[0];
-                console.log(results[0])
                 const object = Object.assign<User, User>(new User, {
-                    id: v4(),
+                    id: crypto.createHash('md5').update(`${buffer[idx].number},${buffer[idx].street},${buffer[idx].lat},${buffer[idx].lng}`).digest('base64'),
                     address: top.formattedAddress!,
                     zip: top.zipcode!,
                     consumption: [['electricity', Math.random() * 2000]],
@@ -50,11 +58,30 @@ fs.createReadStream('./data/dallas.csv')
                     lng
                 })
 
-                DataMapper.put(object).then(() => {
-                    parser.resume()
-                });
+                return object;
+            })
+
+
+            const filtered: User[] = [];
+            objects.forEach(object => {
+                if (object !== null) {
+                    filtered.push(object);
+                }
             });
-        } else {
+
+            console.log(filtered.forEach(v => {
+                const len = filtered.filter(w => v.id === w.id).length
+                if (len !== 0) {
+                    console.log(len, v.id);
+                }
+            }));
+
+            const iter = DynamoMapper.batchPut(filtered);
+
+            for await (const result of iter) { }
+
+            buffer.splice(0, buffer.length);
+
             parser.resume();
         }
     })
