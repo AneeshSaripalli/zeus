@@ -53,14 +53,12 @@ app.get('/', (request: express.Request, response: express.Response) => {
     });
 })
 
-app.get('/api/nearby', JWTMiddleware, async (request: express.Request, response: express.Response) => {
+app.get('/api/all', JWTMiddleware, async (request: express.Request, response: express.Response) => {
     const profile: OAuthUser = response.locals.user;
 
     const users: User[] = [];
 
-    for await (const user of DynamoMapper.scan<User>(User, {
-        // filter: {}
-    })) {
+    for await (const user of DynamoMapper.scan<User>(User, {})) {
         users.push(user);
     }
 
@@ -69,7 +67,11 @@ app.get('/api/nearby', JWTMiddleware, async (request: express.Request, response:
             consumption: user.consumption[0][1],
             ranking: idx,
             uid: user.id,
-            utility: 'electric'
+            utility: 'electric',
+            coords: {
+                lat: user.lat,
+                lng: user.lng
+            }
         })
     );
 
