@@ -79,20 +79,20 @@ const Profile: React.FC<IProps> = (props: IProps): JSX.Element => {
             data={data} />
     }
 
-    const rank = (ranking: number): [string, string] => {
+    const rank = (ranking: number): [string, string, string] => {
         if (ranking < 20) {
-            return ["You're doing AMAZING!", "#01BEFE"]
+            return ["You're doing AMAZING!", "#01BEFE", "Keep doing what you've been doing to get your rebate!"]
         } else if (ranking <= 75) {
-            return ["You're doing your part", "#FF7D00"];
+            return ["You're doing your part", "#FF7D00", "You're so close - try turning off some lights around the house."];
         } else {
-            return ["Thanks for trying! Let's see how we can improve.", "black"];
+            return ["Thanks for trying! Let's see how we can improve.", "black", "You may want to check out our energy saving suggestions!"];
         }
     }
 
     const renderBody = () => {
         if (data === undefined) {
             return (<div className="flexbox flex-row" style={{ alignItems: 'flex-end' }} >
-                <div className="title fw-600 font-xlg" id="profile">
+                <div className="title font-xlg" id="profile">
                     Profile
                 </div>
                 <div className="flex-grow" />
@@ -103,12 +103,14 @@ const Profile: React.FC<IProps> = (props: IProps): JSX.Element => {
 
         const { ranking } = data;
 
-        const color: string = rank(ranking)[1]
+        const details = rank(ranking);
+
+        const color: string = details[1]
 
         return (<div className="flexbox flex-row" style={{ alignItems: 'flex-end' }} >
-            <div className="title fw-600 font-xlg" id="profile">
+            <div className="title font-xlg" id="profile">
                 Profile
-                    </div>
+            </div>
             <div className="flex-grow" />
             <div className="title fw-600 font-xlg" style={{ color: color }}>
                 {data.ranking.toFixed(0)}th percentile
@@ -123,22 +125,41 @@ const Profile: React.FC<IProps> = (props: IProps): JSX.Element => {
         }
 
         const { ranking } = data;
+        const details = rank(ranking);
 
         return (
             <>
-                <div className="flexbox flex-row flex-center fadein" style={{ height: '200px' }}>
-                    <div className="flex-grow fw-600 font-xlg rounded clr-white title h-center" style={{ maxWidth: '60%', textAlign: 'center', background: rank(ranking)[1] }}>
-                        {rank(ranking)[0]}
+                <div className="flexbox flex-column flex-center" style={{ height: '200px' }}>
+                    <div className='flex-grow' />
+                    <div className="flexbox flex-row flex-center fadein" style={{ marginBottom: '20px' }}>
+                        <div className="flex-grow font-xlg rounded pd-sm clr-white title h-center" style={{ textAlign: 'center', background: details[1] }}>
+                            {details[0]}
+                        </div>
                     </div>
+                    <div className="clr-black fw-600 text">
+                        {details[2]}
+                    </div>
+                    <div className="flex-grow" />
                 </div>
             </>
         )
     }
 
     return (<Row justify="center">
-        <Col span={8} className="clr-accent" style={{ paddingTop: "50px", paddingLeft: '20px' }}>
+        <Col span={8} className="clr-black" style={{ paddingTop: "50px", paddingLeft: '20px' }}>
             {renderBody()}
             {renderMiddle()}
+            <div className="flexbox flex-row" style={{ alignItems: 'flex-end' }} >
+                <div className="title font-xlg" id="standings">
+                    Standings
+                </div>
+                <div className="flex-grow" />
+                <div className="title font-xlg" >
+                    <span className="clr-black">Prize pool </span>
+                    <span className="clr-white rounded fw-600 pd-sm" style={{ backgroundColor: '#FF4136' }}>$500</span>
+                </div>
+            </div>
+
             {renderMap()}
         </Col>
     </Row >);

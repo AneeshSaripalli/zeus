@@ -84,7 +84,8 @@ const GoogleMap: React.FC<IProps> = (props: IProps): JSX.Element => {
             return <MapPin total={data.length} key={`${ptData.uid}`} ptData={ptData} lat={ptData.coords.lat} lng={ptData.coords.lng} color={getGradientColor(start, end, idx / data.length)} text="Marker 1" />
         })
     }
-    const mapPins = data?.map
+
+    const text: string = props.localOnly ? "View Global" : "View Neighborhood";
 
     return (<div style={{ height: '500px', position: 'relative' }} className="rounded fadein">
         <GoogleReactMap
@@ -101,7 +102,7 @@ const GoogleMap: React.FC<IProps> = (props: IProps): JSX.Element => {
         </GoogleReactMap>
 
         <Button onClick={props.toggleView} style={{ position: 'absolute', top: 5, left: 5 }} className="rounded text fw-600" type="default">
-            View Local
+            {text}
         </Button>
     </div >)
 
