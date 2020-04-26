@@ -5,6 +5,7 @@ export type ConsumptionScore = {
     utility: string,
     coords: {
         lat: number,
-        lng: number
+        lng: number,
+        zipcode: string
     }
 }

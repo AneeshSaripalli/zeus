@@ -4,4 +4,5 @@
   height: var(--size);
   background-color: black;
   border-radius: var(--size);
+  cursor: pointer;
 }

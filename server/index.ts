@@ -76,7 +76,8 @@ app.get('/api/all', JWTMiddleware, async (request: express.Request, response: ex
             utility: 'electric',
             coords: {
                 lat: user.lat,
-                lng: user.lng
+                lng: user.lng,
+                zipcode: user.zip
             }
         })
     );
@@ -141,7 +142,8 @@ app.get('/api/nearby', JWTMiddleware, async (request: express.Request, response:
             utility: 'electric',
             coords: {
                 lat: user.lat,
-                lng: user.lng
+                lng: user.lng,
+                zipcode: user.zip
             }
         })
     );
@@ -158,13 +160,15 @@ app.get('/api/nearby', JWTMiddleware, async (request: express.Request, response:
 })
 
 app.post('/api/location', JWTMiddleware, async (request: express.Request, response: express.Response) => {
-    console.log(response.locals.user);
     const loc: {
         lat: number,
         lng: number
     } = JSON.parse(request.query.location.toString());
 
     const user: OAuthUser = response.locals.user;
+
+    console.log('uid', response.locals.user.uid)
+
 
     let userExists: boolean = false;
 
@@ -205,6 +209,8 @@ app.post('/api/location', JWTMiddleware, async (request: express.Request, respon
 
 app.get('/api/jwt', (request: express.Request, response: express.Response) => {
     const { displayName, email, photoURL, uid }: OAuthUser = JSON.parse(request.query.account.toString());
+
+    console.log('uid', uid)
 
     const user: OAuthUser = {
         displayName,

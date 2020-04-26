@@ -6,5 +6,6 @@ export declare type ConsumptionScore = {
     coords: {
         lat: number;
         lng: number;
+        zipcode: string;
     };
 };

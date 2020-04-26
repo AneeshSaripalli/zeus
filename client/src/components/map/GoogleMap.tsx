@@ -3,6 +3,7 @@ import GoogleReactMap from 'google-map-react';
 import React from 'react';
 import { ConsumptionScore } from '../../../../types/dist';
 import MapPin from './pin/MapPin';
+import Button from 'antd/es/button';
 
 
 export type ScoreRanking = {
@@ -15,7 +16,9 @@ export type ScoreRanking = {
 
 
 type IProps = {
-    data: ScoreRanking
+    data: ScoreRanking,
+    toggleView: () => void;
+    localOnly: boolean
 }
 
 const getGradientColor = (start_color: string, end_color: string, percent: number) => {
@@ -77,23 +80,30 @@ const GoogleMap: React.FC<IProps> = (props: IProps): JSX.Element => {
             colors.push(getGradientColor(start, end, i / data.length));
         }
 
-        return data.map((userData, idx) => {
-            return <MapPin key={`${userData.uid}`} lat={userData.coords.lat} lng={userData.coords.lng} color={getGradientColor(start, end, idx / data.length)} text="Marker 1" />
+        return data.map((ptData, idx) => {
+            return <MapPin total={data.length} key={`${ptData.uid}`} ptData={ptData} lat={ptData.coords.lat} lng={ptData.coords.lng} color={getGradientColor(start, end, idx / data.length)} text="Marker 1" />
         })
     }
     const mapPins = data?.map
 
-    return (<div style={{ height: '500px' }} className="fadein">
+    return (<div style={{ height: '500px', position: 'relative' }} className="rounded fadein">
         <GoogleReactMap
             bootstrapURLKeys={{ key: 'AIzaSyAwQMP10DBDYDQXkdeJjya6QFTNeso3YEU' }}
             defaultCenter={{ lat: 32.776665, lng: -96.796989 }}
             yesIWantToUseGoogleMapApiInternals
             defaultZoom={14}
             onGoogleApiLoaded={() => setMapLoad(true)}
+            options={{
+
+            }}
         >
             {renderPins()}
         </GoogleReactMap>
-    </div>)
+
+        <Button onClick={props.toggleView} style={{ position: 'absolute', top: 5, left: 5 }} className="rounded text fw-600" type="default">
+            View Local
+        </Button>
+    </div >)
 
 }
 

@@ -1,15 +1,14 @@
 import { Col } from 'antd/es/grid';
 import Row from 'antd/es/row';
+import Spin from 'antd/es/spin';
 import axios, { AxiosResponse } from 'axios';
-import GoogleReactMap from 'google-map-react';
 import React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
+import GoogleMap, { ScoreRanking } from '../../components/map/GoogleMap';
 import { checkLSForJWT } from '../../redux/actions/main';
 import { GlobalState, MainReducerName } from '../../redux/types';
 import "./Profile.css";
-import GoogleMap, { ScoreRanking } from '../../components/map/GoogleMap';
-import { ConsumptionScore } from '../../../../types/dist';
 
 type IReduxDispatchProps = {
     loadJWT: () => void;
@@ -24,10 +23,13 @@ type IProps = IReduxStateProps & IReduxDispatchProps & RouteComponentProps;
 
 const Profile: React.FC<IProps> = (props: IProps): JSX.Element => {
     const [data, setData] = React.useState<ScoreRanking>();
+    const [localOnly, setLocalOnly] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         if (data === undefined) {
-            axios.get('/api/all', {
+            const url: string = localOnly ? '/api/nearby' : '/api/all';
+
+            axios.get(url, {
                 params: {
                     jwt: localStorage.getItem('jwt')
                 }
@@ -45,7 +47,6 @@ const Profile: React.FC<IProps> = (props: IProps): JSX.Element => {
         if (props.jwt === null) {
             console.log('checking local storage')
             console.log(localStorage.getItem('jwt'))
-            // props.history.push('/');
             props.loadJWT();
         } else {
             navigator.geolocation.getCurrentPosition(position => {
@@ -65,10 +66,27 @@ const Profile: React.FC<IProps> = (props: IProps): JSX.Element => {
 
     const renderMap = () => {
         if (data === undefined) {
-            return <></>
+            return <div className="rounded ant-card-loading-block flexbox flex-row flex-center" style={{ height: '500px', }}>
+                <div style={{ textAlign: 'center', marginLeft: 'auto', marginRight: 'auto' }} className="h-center"><Spin size='large' /></div>
+            </div>
         }
 
-        return <GoogleMap data={data} />
+        return <GoogleMap toggleView={() => {
+            setData(undefined);
+            setLocalOnly(!localOnly)
+        }}
+            localOnly={localOnly}
+            data={data} />
+    }
+
+    const rank = (ranking: number): [string, string] => {
+        if (ranking < 20) {
+            return ["You're doing AMAZING!", "#01BEFE"]
+        } else if (ranking <= 75) {
+            return ["You're doing your part", "#FF7D00"];
+        } else {
+            return ["Thanks for trying! Let's see how we can improve.", "black"];
+        }
     }
 
     const renderBody = () => {
@@ -76,28 +94,51 @@ const Profile: React.FC<IProps> = (props: IProps): JSX.Element => {
             return (<div className="flexbox flex-row" style={{ alignItems: 'flex-end' }} >
                 <div className="title fw-600 font-xlg" id="profile">
                     Profile
-                    </div>
+                </div>
+                <div className="flex-grow" />
+                <div className="title fw-600 font-xlg ant-card-loading-block rounded" style={{ width: 200 }} />
             </div>);
+
         }
 
         const { ranking } = data;
 
-        const color: string = (ranking < 20) ? "#01BEFE" : (ranking <= 75) ? "#FF7D00" : "black"
+        const color: string = rank(ranking)[1]
 
         return (<div className="flexbox flex-row" style={{ alignItems: 'flex-end' }} >
             <div className="title fw-600 font-xlg" id="profile">
                 Profile
                     </div>
             <div className="flex-grow" />
-            <div className="title fw-600 font-xlg fadein" style={{ color: color }}>
+            <div className="title fw-600 font-xlg" style={{ color: color }}>
                 {data.ranking.toFixed(0)}th percentile
             </div>
         </div>);
     }
 
+    const renderMiddle = () => {
+        if (data === undefined) {
+            return (<div style={{ height: '200px' }}>
+            </div>)
+        }
+
+        const { ranking } = data;
+
+        return (
+            <>
+                <div className="flexbox flex-row flex-center fadein" style={{ height: '200px' }}>
+                    <div className="flex-grow fw-600 font-xlg rounded clr-white title h-center" style={{ maxWidth: '60%', textAlign: 'center', background: rank(ranking)[1] }}>
+                        {rank(ranking)[0]}
+                    </div>
+                </div>
+            </>
+        )
+    }
+
     return (<Row justify="center">
         <Col span={8} className="clr-accent" style={{ paddingTop: "50px", paddingLeft: '20px' }}>
             {renderBody()}
+            {renderMiddle()}
             {renderMap()}
         </Col>
     </Row >);
