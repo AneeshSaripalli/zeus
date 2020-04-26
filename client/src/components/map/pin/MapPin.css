@@ -1,0 +1,7 @@
+.map-pin {
+    --size: 15px;
+    width: var(--size);
+    height: var(--size);
+    background-color: black;
+    border-radius: var(--size);
+}

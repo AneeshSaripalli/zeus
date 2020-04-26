@@ -8,6 +8,7 @@ import NodeGeocoder from 'node-geocoder';
 import keys from './config';
 import DynamoMapper from './database/DataMapper';
 import User from './models/User';
+import { ConsumptionScore } from '../types/dist'
 
 const geocoder = NodeGeocoder({
     provider: "google",
@@ -50,6 +51,29 @@ app.get('/', (request: express.Request, response: express.Response) => {
     return response.status(200).json({
         response: 'Response'
     });
+})
+
+app.get('/api/nearby', JWTMiddleware, async (request: express.Request, response: express.Response) => {
+    const profile: OAuthUser = response.locals.user;
+
+    const users: User[] = [];
+
+    for await (const user of DynamoMapper.scan<User>(User, {
+        // filter: {}
+    })) {
+        users.push(user);
+    }
+
+    const scores: ConsumptionScore[] = users.sort((u1, u2) => u1.consumption[0][1] - u2.consumption[0][1]).map((user, idx) =>
+        ({
+            consumption: user.consumption[0][1],
+            ranking: idx,
+            uid: user.id,
+            utility: 'electric'
+        })
+    );
+
+    return response.status(200).json({ response: scores });
 })
 
 app.post('/api/location', JWTMiddleware, (request: express.Request, response: express.Response) => {

@@ -8,6 +8,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { checkLSForJWT } from '../../redux/actions/main';
 import { GlobalState, MainReducerName } from '../../redux/types';
 import "./Profile.css";
+import GoogleMap from '../../components/map/GoogleMap';
 
 type IReduxDispatchProps = {
     loadJWT: () => void;
@@ -54,14 +55,7 @@ const Profile: React.FC<IProps> = (props: IProps): JSX.Element => {
                     User Name
                     </div>
             </div>
-            <div style={{ height: '500px' }}>
-                <GoogleReactMap
-                    bootstrapURLKeys={{ key: 'AIzaSyAwQMP10DBDYDQXkdeJjya6QFTNeso3YEU' }}
-                    defaultCenter={{ lat: 32.776665, lng: -96.796989 }}
-                    yesIWantToUseGoogleMapApiInternals
-                    defaultZoom={13}
-                />
-            </div>
+            <GoogleMap />
         </Col>
     </Row >);
 }
