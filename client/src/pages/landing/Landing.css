@@ -3,6 +3,7 @@
   background: linear-gradient(
     0deg,
     rgba(0, 181, 255, 1) 0%,
+    rgba(0, 229, 229) 50%,
     rgba(0, 116, 217, 1) 100%
   );
   height: calc(100vh - var(--header-px));
@@ -42,7 +43,7 @@
 
 #info {
   min-height: 100vh;
-  background: rgba(240, 240, 240);
+  /* background: rgba(240, 240, 240); */
   text-align: center;
   padding-top: 50px;
   padding-bottom: 20px;
