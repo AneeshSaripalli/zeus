@@ -1,13 +1,13 @@
 import { Col } from 'antd/es/grid';
 import Row from 'antd/es/row';
+import axios from 'axios';
 import GoogleReactMap from 'google-map-react';
 import React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
+import { checkLSForJWT } from '../../redux/actions/main';
 import { GlobalState, MainReducerName } from '../../redux/types';
 import "./Profile.css";
-import axios from 'axios';
-import { checkLSForJWT } from '../../redux/actions/main';
 
 type IReduxDispatchProps = {
     loadJWT: () => void;
@@ -23,18 +23,19 @@ type IProps = IReduxStateProps & IReduxDispatchProps & RouteComponentProps;
 const Profile: React.FC<IProps> = (props: IProps): JSX.Element => {
     React.useEffect(() => {
         if (props.jwt === null) {
+            console.log('checking local storage')
+            console.log(localStorage.getItem('jwt'))
             // props.history.push('/');
             props.loadJWT();
         } else {
-            console.log("nav get position, jwt non null")
             navigator.geolocation.getCurrentPosition(position => {
-                console.log(position.coords)
+                const { longitude, latitude } = position.coords;
                 axios.post('/api/location', {}, {
                     params: {
                         jwt: props.jwt,
                         location: {
-                            lat: position.coords.latitude,
-                            lng: position.coords.latitude
+                            lat: latitude,
+                            lng: longitude
                         }
                     }
                 });

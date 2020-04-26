@@ -1,7 +1,18 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import express, { response } from 'express';
+import express from 'express';
 import jwt from 'jsonwebtoken';
+import { OAuthUser } from './types/OAuthUser';
+
+import NodeGeocoder from 'node-geocoder';
+import keys from './config';
+import DynamoMapper from './database/DataMapper';
+import User from './models/User';
+
+const geocoder = NodeGeocoder({
+    provider: "google",
+    apiKey: keys.google_maps_api_key,
+});
 
 const PORT: number = 8000;
 
@@ -12,34 +23,83 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+const key: string = 'somequerysecretkeyherewhichisclearlynotproductionreadyandshouldnotbeUs3dIntheFuture';
+
+const JWTMiddleware = (request: express.Request, response: express.Response, next: express.NextFunction) => {
+    const token = request.query.jwt;
+    if (token === undefined) {
+        return response.status(400).json({
+            error: "JWT needs to be provided."
+        });
+    }
+    const { displayName, email, photoURL, uid }: OAuthUser = jwt.decode(token.toString()) as OAuthUser;
+
+    const user: OAuthUser = {
+        displayName,
+        email,
+        photoURL,
+        uid
+    };
+
+
+    response.locals.user = user;
+    return next();
+};
+
 app.get('/', (request: express.Request, response: express.Response) => {
     return response.status(200).json({
         response: 'Response'
     });
 })
 
-app.post('/api/location', (request: express.Request, response: express.Response) => {
-    console.log(request.query);
+app.post('/api/location', JWTMiddleware, (request: express.Request, response: express.Response) => {
+    console.log(response.locals.user);
+    const loc: {
+        lat: number,
+        lng: number
+    } = JSON.parse(request.query.location.toString());
+
+    const user: OAuthUser = response.locals.user;
+
+    geocoder.reverse({
+        lat: loc.lat,
+        lon: loc.lng
+    }).then(response => {
+        const top = response[0];
+
+        const hotel = Object.assign<User, User>(new User, {
+            id: user.uid,
+            address: top.formattedAddress!,
+            consumption: [["electricity", Math.random() * 1000.0]],
+            lat: loc.lat,
+            lng: loc.lng,
+            zip: top.zipcode!
+        });
+
+        DynamoMapper.put(hotel);
+    })
+
+
     return response.status(200).json({
         response: 'dummy response'
     })
-})
+});
 
 app.get('/api/jwt', (request: express.Request, response: express.Response) => {
-    if (request.query.account !== undefined) {
-        console.log('Found account var');
-        const signedJWT: string = jwt.sign(request.query.account, 'somequerysecretkeyherewhichisclearlynotproductionreadyandshouldnotbeUs3dIntheFuture')
+    const { displayName, email, photoURL, uid }: OAuthUser = JSON.parse(request.query.account.toString());
 
-        console.log('Returning signed', signedJWT);
+    const user: OAuthUser = {
+        displayName,
+        email,
+        photoURL,
+        uid
+    };
 
-        return response.status(200).json({
-            response: signedJWT
-        })
-    }
+    const signedJWT: string = jwt.sign(user, key)
 
-    console.log('JWT is missing from the parsing request.');
-
-    return response.status(400).json({ error: 'Query paramter account needs to be present on the URL.' });
+    return response.status(200).json({
+        response: signedJWT
+    })
 })
 
 app.listen(PORT, () => {

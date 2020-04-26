@@ -2,6 +2,8 @@ import { DataMapper } from '@aws/dynamodb-data-mapper';
 import AWS from 'aws-sdk';
 import keys from '../config';
 
+console.log(keys)
+
 AWS.config.update({
     region: keys.aws_region,
     accessKeyId: keys.aws_access_key,

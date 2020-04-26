@@ -1,5 +1,5 @@
+import { MAIN_REMOVE_JWT, MAIN_SET_JWT } from "../actions/main";
 import { Action, MainReducerState } from "../types";
-import { MAIN_SET_JWT } from "../actions/main";
 
 const defaultState: MainReducerState = {
     jwt: null
@@ -12,6 +12,13 @@ function MainReducer(state = defaultState, action: Action<any>): MainReducerStat
             return {
                 ...state,
                 jwt: action.payload
+            }
+        }
+
+        case MAIN_REMOVE_JWT: {
+            return {
+                ...state,
+                jwt: null
             }
         }
 

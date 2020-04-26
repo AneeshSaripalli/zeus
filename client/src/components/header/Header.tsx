@@ -1,14 +1,18 @@
+import Dropdown from 'antd/es/dropdown';
+import Menu, { ClickParam } from 'antd/es/menu';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import { checkLSForJWT, fetchSetJWT } from '../../redux/actions/main';
+import { checkLSForJWT, fetchSetJWT, removeJWTFromLS } from '../../redux/actions/main';
 import { GlobalState, MainReducerName } from '../../redux/types';
 import Login from '../login/Login';
 import './Header.css';
 
+
 type IReduxDispatch = {
     fetchSetJWT: (account: object) => void;
     loadJWT: () => void;
+    logoutJWT: () => void;
 }
 
 type IReduxState = {
@@ -27,16 +31,33 @@ const Header: React.FC<IProps> = (props: IProps): JSX.Element => {
         }
     });
 
+    const menuClick = (param: ClickParam) => {
+        if (param.key === 'logout') {
+            console.log('logging out')
+            props.logoutJWT();
+            props.history.push('/');
+        }
+    }
+
     const renderTopRightWidget = () => {
         if (props.jwt) {
-            return (<Link to="profile">
-                <span className="title clr-white fw-600 font-lg">
-                    Profile
-                </span>
-            </Link>)
+            return (
+                <Link to="profile">
+                    <Dropdown overlay={
+                        <Menu onClick={menuClick} className="rounded">
+                            <Menu.Item key="logout">Logout</Menu.Item>
+                        </Menu>
+                    } >
+                        <span key="profile" className="title clr-white fw-600 font-lg">
+                            Profile
+
+                    </span>
+                    </Dropdown>
+                </Link >
+            )
         }
 
-        return (<button onClick={() => setLoginVisible(true)} className="body rounded clr-accent bkg-white fw-600 font-lg" style={{ border: 'none' }}>
+        return (<button key="login" onClick={() => setLoginVisible(true)} className="body rounded clr-accent bkg-white fw-600 font-lg" style={{ border: 'none' }}>
             Login
         </button>
         );
@@ -66,7 +87,8 @@ const Header: React.FC<IProps> = (props: IProps): JSX.Element => {
 const mapDispatchToProps = (dispatch: any): IReduxDispatch => {
     return {
         fetchSetJWT: dispatch(fetchSetJWT),
-        loadJWT: dispatch(checkLSForJWT)
+        loadJWT: dispatch(checkLSForJWT),
+        logoutJWT: dispatch(removeJWTFromLS)
     }
 }
 
