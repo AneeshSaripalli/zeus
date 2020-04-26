@@ -41,7 +41,7 @@
 }
 
 #info {
-  height: 100vh;
+  min-height: 100vh;
   background: rgba(240, 240, 240);
   text-align: center;
   padding-top: 50px;
